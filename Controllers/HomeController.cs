@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using e4International.Models;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace e4International.Controllers
 {
@@ -32,6 +34,14 @@ namespace e4International.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public IActionResult Create(InfoViewModel model)
+        {
+            var filename = "coll.xml";
+            XmlSerializer ser = new XmlSerializer(typeof(InfoViewModel));
+            TextWriter writer = new StreamWriter(filename);
+            ser.Serialize(writer, model);
+            return null;
         }
     }
 }
