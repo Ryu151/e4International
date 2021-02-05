@@ -17,13 +17,6 @@ namespace e4International.Controllers
             return View();
         }
 
-        public IActionResult Create(InfoViewModel model)
-        {
-            var filename = "coll.xml";
-            XmlSerializer ser = new XmlSerializer(typeof(InfoViewModel));
-            TextWriter writer = new StreamWriter(filename);
-            ser.Serialize(writer, model);
-            return null;
-        }
+      
     }
 }

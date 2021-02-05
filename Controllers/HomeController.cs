@@ -9,6 +9,7 @@ using e4International.Models;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml.Linq;
+using System.Xml;
 
 namespace e4International.Controllers
 {
@@ -23,15 +24,26 @@ namespace e4International.Controllers
 
         public IActionResult Index()
         {
-            InfoViewModel i;
-            var filename = "coll.xml";
-            XmlSerializer ser = new XmlSerializer(typeof(InfoViewModel));
+            var view = new Entries();
+            
+            IEnumerable<Entry> i;
+            var filename = "coll2.xml";
+            XmlSerializer ser = new XmlSerializer(typeof(Entries));
             using (Stream reader = new FileStream(filename, FileMode.Open)) 
             {
-                i = (InfoViewModel)ser.Deserialize(reader);
+               var x = ser.Deserialize(reader);
+                view = (Entries)x;
             }
-            var test = i;
-            return View();
+
+            var xy = view.Entry.Select(i => new Entry()
+            {
+                Id = i.Id,
+                CellPhone = i.CellPhone,
+                Surname = i.Surname,
+                UserName = i.UserName
+            }).ToList();
+
+            return PartialView("~/Views/PartialViews/_Entries.cshtml", xy);
         }
 
         public IActionResult Privacy()
@@ -44,14 +56,40 @@ namespace e4International.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public IActionResult Create(InfoViewModel model)
+        public IActionResult Create(Entry model)
         {
-            var filename = "coll.xml";
-            XDocument doc = XDocument.Load(filename);
-            XElement info = doc.Element("InfoViewModel");
-            info.Add(new XElement("Username", model.UserName), new XElement("Surname", model.Surname), new XElement("CellPhone", model.CellPhone));
-            doc.Save(filename);
-              
+
+            var filename = "coll2.xml";
+            if (!System.IO.File.Exists(filename))
+            {
+                XDocument xDoc = new XDocument();
+                XElement root1 = new XElement("Entries");
+                xDoc.Add(root1);
+                xDoc.Save(filename);
+            };
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(filename);
+            var dec = xmlDoc.GetElementsByTagName("Entry").Count;
+
+            var entry = xmlDoc.CreateElement("Entry");
+            dec += 1;
+            entry.SetAttribute("Id", dec.ToString());
+
+            var username = xmlDoc.CreateElement("UserName");
+            username.InnerText = model.UserName;
+            var surname = xmlDoc.CreateElement("Surname");
+            surname.InnerText = model.Surname;
+            var cellphone = xmlDoc.CreateElement("CellPhone");
+            cellphone.InnerText = model.CellPhone;
+
+            entry.AppendChild(username);
+            entry.AppendChild(surname);
+            entry.AppendChild(cellphone);
+            var root = xmlDoc.DocumentElement;
+            root.AppendChild(entry);
+            xmlDoc.Save(filename);
+
             return null;
         }
     }
