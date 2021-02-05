@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <InfoViewModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <UserName>tesy</UserName>
-  <Surname>test</Surname>
-  <CellPhone>=235</CellPhone>
+  <UserName>teguy</UserName>
+  <Surname>telegu</Surname>
+  <CellPhone>madras</CellPhone>
+  <Username>123</Username>
+  <Surname>456</Surname>
+  <CellPhone>789</CellPhone>
 </InfoViewModel>
