@@ -1,12 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE Entries [  
-  <!ELEMENT Entries ANY>   
-  <!ELEMENT Entry ANY>   
-  <!ATTLIST Entry Id ID #REQUIRED>]>
+<!DOCTYPE Pubs [<!ELEMENT Entries ANY>
+                                       <!ELEMENT Entry ANY>
+                                       <!ATTLIST Entry Id ID #REQUIRED>]>
 <Entries>
-  <Entry Id="_2">
+  <Entry Id="_1">
     <UserName>Mayur</UserName>
-    <Surname>Joynauthfwe</Surname>
-    <CellPhone>+2306272194</CellPhone>
+    <Surname>Joynauth</Surname>
+    <CellPhone>+23059789789</CellPhone>
+  </Entry>
+  <Entry Id="_2">
+    <UserName>Tanish</UserName>
+    <Surname>Joynauth</Surname>
+    <CellPhone>+23059789789</CellPhone>
   </Entry>
 </Entries>

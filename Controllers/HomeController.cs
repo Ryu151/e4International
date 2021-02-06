@@ -25,25 +25,41 @@ namespace e4International.Controllers
         public IActionResult Index()
         {
             var view = new Entries();
-
-
             var filename = "coll2.xml";
             XmlSerializer ser = new XmlSerializer(typeof(Entries));
-            using (Stream reader = new FileStream(filename, FileMode.Open))
+            if (!System.IO.File.Exists(filename))
             {
-                var x = ser.Deserialize(reader);
-                view = (Entries)x;
+                return PartialView("~/Views/PartialViews/_Entries.cshtml", new List<Entry>());
             }
-
-            var xy = view.Entry.Select(i => new Entry()
+            else
             {
-                Id = i.Id,
-                CellPhone = i.CellPhone,
-                Surname = i.Surname,
-                UserName = i.UserName
-            }).ToList();
+                using (Stream reader = new FileStream(filename, FileMode.Open))
+                {
+                    if (new FileInfo(filename).Length > 3)
+                    {
+                        try
+                        {
+                            var x = ser.Deserialize(reader);
+                            view = (Entries)x;
 
-            return PartialView("~/Views/PartialViews/_Entries.cshtml", xy);
+                            var xy = view.Entry.Select(i => new Entry()
+                            {
+                                Id = i.Id,
+                                CellPhone = i.CellPhone,
+                                Surname = i.Surname,
+                                UserName = i.UserName
+                            }).ToList();
+
+                            return PartialView("~/Views/PartialViews/_Entries.cshtml", xy);
+                        }
+                        catch { return PartialView("~/Views/Shared/Error.cshtml"); }
+                    }
+                    else
+                    {
+                        return PartialView("~/Views/PartialViews/_Entries.cshtml", new List<Entry>());
+                    }
+                }
+            }            
         }
 
         public IActionResult Privacy()
@@ -51,10 +67,10 @@ namespace e4International.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return PartialView("~/Views/Shared/Error.cshtml");
         }
 
         [HttpGet]
@@ -69,7 +85,10 @@ namespace e4International.Controllers
             var filename = "coll2.xml";
             if (!System.IO.File.Exists(filename))
             {
-                XDocument xDoc = new XDocument();
+                var internalSubset = @"<!ELEMENT Entries ANY>
+                                       <!ELEMENT Entry ANY>
+                                       <!ATTLIST Entry Id ID #REQUIRED>";
+                XDocument xDoc = new XDocument(new XDocumentType("Pubs", null, null, internalSubset));
                 XElement root1 = new XElement("Entries");
                 xDoc.Add(root1);
                 xDoc.Save(filename);
@@ -77,10 +96,19 @@ namespace e4International.Controllers
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(filename);
-
+            int item = 0;
             var count = xmlDoc.GetElementsByTagName("Entry").Count;
-            var item = Int32.Parse(xmlDoc.GetElementsByTagName("Entry").Item(count - 1).Attributes.GetNamedItem("Id").InnerText.Remove(0,1));
-            item += 1;
+
+            if (count == 0)
+            {
+                item++;
+            }
+            else
+            {
+                item = Int32.Parse(xmlDoc.GetElementsByTagName("Entry")?.Item(count - 1).Attributes.GetNamedItem("Id").InnerText.Remove(0, 1));
+                item += 1;
+            }
+                
             var entry = xmlDoc.CreateElement("Entry");
             
             entry.SetAttribute("Id", "_" + item.ToString());
@@ -99,10 +127,9 @@ namespace e4International.Controllers
             root.AppendChild(entry);
             xmlDoc.Save(filename);
 
-            return null;
+            return Index();
         }
 
-        [HttpGet]
         public IActionResult Delete(string id)
         {
             var filename = "coll2.xml";
@@ -115,16 +142,6 @@ namespace e4International.Controllers
             return null;
         }
 
-
-            [HttpPost]
-        public IActionResult Delete(Entry entry)
-        {
-            var filename = "coll2.xml";
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(filename);
-            var dec = xmlDoc.GetElementById(entry.Id);
-            return null;
-        }
 
         [HttpGet]
         public IActionResult Edit(string id)
@@ -155,7 +172,7 @@ namespace e4International.Controllers
             element.Element("Surname").Value = model.Surname;
             element.Element("CellPhone").Value = model.CellPhone;
             xmlDoc.Save(filename);
-            return null;
+            return Index();
         }
     }
 }
