@@ -1,17 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE Entries[  
+<!DOCTYPE Entries [  
   <!ELEMENT Entries ANY>   
   <!ELEMENT Entry ANY>   
   <!ATTLIST Entry Id ID #REQUIRED>]>
 <Entries>
   <Entry Id="_2">
     <UserName>Mayur</UserName>
-    <Surname>Joynauth</Surname>
+    <Surname>Joynauthfwe</Surname>
     <CellPhone>+2306272194</CellPhone>
-  </Entry>
-  <Entry Id="_3">
-    <UserName>Mayur</UserName>
-    <Surname>Joynauth</Surname>
-    <CellPhone>+23059789789</CellPhone>
   </Entry>
 </Entries>

@@ -125,5 +125,37 @@ namespace e4International.Controllers
             var dec = xmlDoc.GetElementById(entry.Id);
             return null;
         }
+
+        [HttpGet]
+        public IActionResult Edit(string id)
+        {
+            var filename = "coll2.xml";
+            XDocument xmlDoc = XDocument.Load(filename);
+            Entry element = (from el in xmlDoc.Root.Elements("Entry")
+                                where (string)el.Attribute("Id") == id
+                                select new Entry { 
+                                    Id = el.Attribute("Id").Value,
+                                    Surname = el.Element("Surname").Value,
+                                    CellPhone = el.Element("CellPhone").Value,
+                                    UserName = el.Element("UserName").Value
+                                }).FirstOrDefault();
+            return PartialView("~/Views/PartialViews/_EditEntry.cshtml",element);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Entry model)
+        {
+            var filename = "coll2.xml";
+            XDocument xmlDoc = XDocument.Load(filename);
+            XElement element = (from el in xmlDoc.Root.Elements("Entry")
+                             where (string)el.Attribute("Id") == model.Id
+                             select el).FirstOrDefault();
+
+            element.Element("UserName").Value = model.UserName;
+            element.Element("Surname").Value = model.Surname;
+            element.Element("CellPhone").Value = model.CellPhone;
+            xmlDoc.Save(filename);
+            return null;
+        }
     }
 }
