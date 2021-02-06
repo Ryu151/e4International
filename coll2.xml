@@ -1,21 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Entries[  
+  <!ELEMENT Entries ANY>   
+  <!ELEMENT Entry ANY>   
+  <!ATTLIST Entry Id ID #REQUIRED>]>
 <Entries>
-  <Entry Id="1">
-    <UserName>Amardev</UserName>
+  <Entry Id="_2">
+    <UserName>Mayur</UserName>
     <Surname>Joynauth</Surname>
-    <CellPhone>+230 59789789</CellPhone>
+    <CellPhone>+2306272194</CellPhone>
   </Entry>
-  <Entry Id="2">
-    <UserName>Tanish</UserName>
+  <Entry Id="_3">
+    <UserName>Mayur</UserName>
     <Surname>Joynauth</Surname>
-    <CellPhone>+230 627 2194</CellPhone>
-  </Entry>
-  <Entry Id="3">
-    <UserName>
-    </UserName>
-    <Surname>
-    </Surname>
-    <CellPhone>
-    </CellPhone>
+    <CellPhone>+23059789789</CellPhone>
   </Entry>
 </Entries>

@@ -25,13 +25,13 @@ namespace e4International.Controllers
         public IActionResult Index()
         {
             var view = new Entries();
-            
-            IEnumerable<Entry> i;
+
+
             var filename = "coll2.xml";
             XmlSerializer ser = new XmlSerializer(typeof(Entries));
-            using (Stream reader = new FileStream(filename, FileMode.Open)) 
+            using (Stream reader = new FileStream(filename, FileMode.Open))
             {
-               var x = ser.Deserialize(reader);
+                var x = ser.Deserialize(reader);
                 view = (Entries)x;
             }
 
@@ -56,6 +56,13 @@ namespace e4International.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return PartialView("~/Views/PartialViews/_CreateEntry.cshtml", new Entry());
+        }
+        [HttpPost]
         public IActionResult Create(Entry model)
         {
 
@@ -70,11 +77,13 @@ namespace e4International.Controllers
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(filename);
-            var dec = xmlDoc.GetElementsByTagName("Entry").Count;
 
+            var count = xmlDoc.GetElementsByTagName("Entry").Count;
+            var item = Int32.Parse(xmlDoc.GetElementsByTagName("Entry").Item(count - 1).Attributes.GetNamedItem("Id").InnerText.Remove(0,1));
+            item += 1;
             var entry = xmlDoc.CreateElement("Entry");
-            dec += 1;
-            entry.SetAttribute("Id", dec.ToString());
+            
+            entry.SetAttribute("Id", "_" + item.ToString());
 
             var username = xmlDoc.CreateElement("UserName");
             username.InnerText = model.UserName;
@@ -90,6 +99,30 @@ namespace e4International.Controllers
             root.AppendChild(entry);
             xmlDoc.Save(filename);
 
+            return null;
+        }
+
+        [HttpGet]
+        public IActionResult Delete(string id)
+        {
+            var filename = "coll2.xml";
+            XDocument xmlDoc = XDocument.Load(filename);
+            XElement element = (from el in xmlDoc.Root.Elements("Entry")
+                                           where (string)el.Attribute("Id") == id
+                                           select el).FirstOrDefault();
+            element.Remove();
+            xmlDoc.Save(filename);
+            return null;
+        }
+
+
+            [HttpPost]
+        public IActionResult Delete(Entry entry)
+        {
+            var filename = "coll2.xml";
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(filename);
+            var dec = xmlDoc.GetElementById(entry.Id);
             return null;
         }
     }
